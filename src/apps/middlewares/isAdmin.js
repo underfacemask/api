@@ -1,7 +1,7 @@
-// src/middlewares/isAdmin.js
 module.exports = (req, res, next) => {
-  if (!req.user.isAdmin) {
-    return res.status(403).json({ error: 'Acesso negado: apenas admins' });
+  // Deve ser usado após o middleware de auth, que popula req.user
+  if (!req.user || !req.user.isAdmin) {
+    return res.status(403).json({ error: 'Acesso negado: administrador apenas' });
   }
   return next();
 };

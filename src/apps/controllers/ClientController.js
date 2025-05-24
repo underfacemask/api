@@ -1,4 +1,4 @@
-const { Client } = require('../models');
+const Client = require('../models/Client');
 
 module.exports = {
   async index(req, res) {
@@ -8,26 +8,40 @@ module.exports = {
 
   async show(req, res) {
     const client = await Client.findByPk(req.params.id);
-    if (!client) return res.status(404).json({ error: 'Client not found' });
+    if (!client) {
+      return res.status(404).json({ error: 'Cliente não encontrado' });
+    }
     return res.json(client);
   },
 
   async store(req, res) {
-    const client = await Client.create(req.body);
-    return res.status(201).json(client);
+    try {
+      const client = await Client.create(req.body);
+      return res.status(201).json(client);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
   },
 
   async update(req, res) {
     const client = await Client.findByPk(req.params.id);
-    if (!client) return res.status(404).json({ error: 'Client not found' });
-    await client.update(req.body);
-    return res.json(client);
+    if (!client) {
+      return res.status(404).json({ error: 'Cliente não encontrado' });
+    }
+    try {
+      await client.update(req.body);
+      return res.json(client);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
   },
 
   async destroy(req, res) {
     const client = await Client.findByPk(req.params.id);
-    if (!client) return res.status(404).json({ error: 'Client not found' });
+    if (!client) {
+      return res.status(404).json({ error: 'Cliente não encontrado' });
+    }
     await client.destroy();
-    return res.status(204).send();
+    return res.json({ message: 'Cliente excluído com sucesso' });
   }
 };

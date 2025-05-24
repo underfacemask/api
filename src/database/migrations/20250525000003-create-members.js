@@ -1,16 +1,11 @@
 'use strict';
+
 module.exports = {
-  up: async (qi, Sequelize) => {
-    await qi.createTable('Projects', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Members', {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
       name: { type: Sequelize.STRING, allowNull: false },
-      description: { type: Sequelize.TEXT },
-      clientId: {
-        type: Sequelize.INTEGER,
-        references: { model: 'Clients', key: 'id' },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
-      },
+      email: { type: Sequelize.STRING, allowNull: false, unique: true },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -23,7 +18,8 @@ module.exports = {
       }
     });
   },
-  down: async qi => {
-    await qi.dropTable('Projects');
+
+  down: async (queryInterface) => {
+    await queryInterface.dropTable('Members');
   }
 };

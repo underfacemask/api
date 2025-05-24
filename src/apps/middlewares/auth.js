@@ -1,23 +1,22 @@
-// src/middlewares/auth.js
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const User = require('../models/User');
+const { secret: JWT_SECRET } = require('../configs/jwt');
 
-module.exports = async function auth(req, res, next) {
+module.exports = async (req, res, next) => {
   const authHeader = req.headers.authorization;
-  if (!authHeader) return res.status(401).json({ error: 'Token não fornecido' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token não fornecido' });
+  }
 
-  // Espera formato "Bearer <token>"
-  const parts = authHeader.split(' ');
-  if (parts.length !== 2) return res.status(401).json({ error: 'Token malformatado' });
-
-  const [, token] = parts;
+  const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     const user = await User.findByPk(decoded.id);
-    if (!user) return res.status(401).json({ error: 'Usuário inválido' });
-
-    req.user = user; // anexa usuário à req
-    return next();
+    if (!user) {
+      return res.status(401).json({ error: 'Usuário inválido' });
+    }
+    req.user = { id: user.id, isAdmin: user.isAdmin };
+    next();
   } catch (err) {
     return res.status(401).json({ error: 'Token inválido ou expirado' });
   }

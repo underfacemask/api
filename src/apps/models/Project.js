@@ -1,13 +1,22 @@
-module.exports = (sequelize, DataTypes) => {
-  const Project = sequelize.define('Project', {
-    name: { type: DataTypes.STRING, allowNull: false },
-    description: DataTypes.TEXT
-  });
+const { Model, DataTypes } = require('sequelize');
+const sequelize = require('../configs/db');
+const Client = require('./Client');
 
-  Project.associate = models => {
-    Project.belongsTo(models.Client, { foreignKey: 'clientId' });
-    Project.hasMany(models.Budget, { foreignKey: 'projectId' });
-  };
+class Project extends Model {}
 
-  return Project;
-};
+Project.init({
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  description: DataTypes.TEXT
+}, {
+  sequelize,
+  modelName: 'Project'
+});
+
+// Associações
+Project.belongsTo(Client, { foreignKey: 'clientId', as: 'client' });
+Client.hasMany(Project, { foreignKey: 'clientId', as: 'projects' });
+
+module.exports = Project;

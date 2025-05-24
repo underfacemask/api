@@ -1,9 +1,9 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../configs/db');
 
-class Client extends Model {}
+class User extends Model {}
 
-Client.init({
+User.init({
   name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -14,10 +14,17 @@ Client.init({
     unique: true,
     validate: { isEmail: true }
   },
-  phone: DataTypes.STRING
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  isAdmin: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  }
 }, {
   sequelize,
-  modelName: 'Client'
+  modelName: 'User'
 });
 
-module.exports = Client;
+module.exports = User;

@@ -1,16 +1,24 @@
 'use strict';
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Clients', {
+  up: async (qi, Sequelize) => {
+    await qi.createTable('Clients', {
       id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
       name: { type: Sequelize.STRING, allowNull: false },
-      contactEmail: { type: Sequelize.STRING, allowNull: false },
-      company: Sequelize.STRING,
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE
+      email: { type: Sequelize.STRING, allowNull: false, unique: true },
+      phone: { type: Sequelize.STRING },
+      createdAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      }
     });
   },
-  down: async queryInterface => {
-    await queryInterface.dropTable('Clients');
+  down: async qi => {
+    await qi.dropTable('Clients');
   }
 };
